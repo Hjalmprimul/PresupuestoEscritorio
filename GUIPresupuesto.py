@@ -3,6 +3,7 @@ from tkinter import *
 from tkinter import messagebox, ttk
 from Clases.Egresos import Egreso
 from Clases.Ingresos import Ingreso
+from Clases.Balances import Balance
 import re
 
 class interfacePresupuesto (Frame):
@@ -203,18 +204,22 @@ class interfacePresupuesto (Frame):
                 if esNuevo:
                     nIngreso = Ingreso(0,Descripcion.get(),Fecha.get(),Monto.get())
                     nIngreso.Agregar()
+                    self.VerifBalanceGuardar(0)
                 else:
                     nIngreso = Ingreso(self.IngreTV.item(self.IngreTV.selection())['tags'][0],Descripcion.get(),Fecha.get(),Monto.get())
                     nIngreso.Editar()
+                    self.VerifBalanceEditar(0)
                 self.ResetEntrys()
                 self.Llenar()
             elif egreOingre == 1:
                 if esNuevo:
                     nEgreso = Egreso(0,Descripcion.get(),Fecha.get(),Monto.get())
                     nEgreso.Agregar()
+                    self.VerifBalanceGuardar(1)
                 else:
                     nEgreso = Egreso(self.EgreTV.item(self.EgreTV.selection())['tags'][0],Descripcion.get(),Fecha.get(),Monto.get())
                     nEgreso.Editar()
+                    self.VerifBalanceEditar(1)
                 self.ResetEntrys()
                 self.Llenar()
     # Cerrar Ventana
@@ -265,7 +270,7 @@ class interfacePresupuesto (Frame):
             self.EgreTV.insert('', 0, text=d[1], values=(self.StringPeso(d[2]),d[3]), tags=d[0])
     # Editar Ingreso y Egreso
     def Editar(self,egreOingre):
-        global esNuevo
+        global esNuevo, montoAnterior
         esNuevo = False
         if egreOingre == 0:
             try:
@@ -277,6 +282,7 @@ class interfacePresupuesto (Frame):
                 for char in monto:
                     if char != '$' and char != '.':
                         st = st + char
+                montoAnterior = st
                 Monto.set(st)
                 Fecha.set(self.IngreTV.item(self.IngreTV.selection())['values'][1])
                 #ESTADO BOTONES
@@ -295,6 +301,7 @@ class interfacePresupuesto (Frame):
                 for char in monto:
                     if char != '$' and char != '.':
                         st = st + char
+                montoAnterior = st
                 Monto.set(st)
                 Fecha.set(self.EgreTV.item(self.EgreTV.selection())['values'][1])
                 #ESTADO BOTONES
@@ -307,11 +314,38 @@ class interfacePresupuesto (Frame):
     # Eliminar Ingreso y Egreso
     def Eliminar(self,egreOingre):
         if egreOingre == 0:
-            ingre = Ingreso(self.IngreTV.item(self.IngreTV.selection())['tags'][0])
+            ingre = Ingreso(self.IngreTV.item(self.IngreTV.selection())['tags'][0],"","",self.IngreTV.item(self.IngreTV.selection())['values'][0])
             ingre.Eliminar()
             self.ResetEntrys()
+            self.VerifBalanceEliminar(egreOingre)
         else:
             egre = Egreso(self.EgreTV.item(self.EgreTV.selection())['tags'][0])
             egre.Eliminar()
             self.ResetEntrys()
+            self.VerifBalanceEliminar(egreOingre)
         self.Llenar()
+    # Verifica, actualiza balance y crea balance
+    def VerifBalanceGuardar(self,egreOingre):
+        mes = Fecha.get()[3:]
+        balance = Balance(mes,Monto.get())
+        balance.verificar(egreOingre)
+    def VerifBalanceEliminar(self,egreOingre):
+        if egreOingre == 0:
+            mes = self.IngreTV.item(self.IngreTV.selection())['values'][1]
+            monto = self.IngreTV.item(self.IngreTV.selection())['values'][0]
+            st = ''
+            for char in monto:
+                if char != '$' and char != '.':
+                    st = st + char
+        elif egreOingre == 1:
+            mes = self.EgreTV.item(self.EgreTV.selection())['values'][1]
+            monto = self.EgreTV.item(self.EgreTV.selection())['values'][0]
+            st = ''
+            for char in monto:
+                if char != '$' and char != '.':
+                    st = st + char
+            st = '-' + st
+        balance = Balance(mes[3:],int(st))
+        balance.verificar(1)
+    def VerifBalanceEditar(self,egreOingre):
+        pass

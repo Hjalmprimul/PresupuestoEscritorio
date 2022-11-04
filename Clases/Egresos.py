@@ -37,7 +37,6 @@ class Egreso():
     def Editar(self):
         conexDB = ConexionDB()
         sql = "update egresos set Descripcion='%s', Fecha='%s', Monto='%s' where id='%s'"
-        print(self.id)
         conexDB.cursor.execute(sql %(self.descripcion, self.fecha, self.monto, self.id))
         conexDB.con.commit
         messagebox.showinfo('Modificar','Datos del Egreso Modificados')

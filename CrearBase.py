@@ -15,4 +15,8 @@ miCursor.execute("""CREATE TABLE EGRESOS (
                 MONTO INTEGER,
                 FECHA VARCHAR(11))""")
 
+miCursor.execute("""CREATE TABLE BALANCES (
+                MES VARCHAR NOT NULL PRIMARY KEY,
+                MONTO INTERGER)""")
+
 miConex.close()
