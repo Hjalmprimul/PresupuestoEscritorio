@@ -1,12 +1,13 @@
 from tkinter import *
 from GUIPresupuesto import interfacePresupuesto
 from GUIDatos import interfaceDatos
+from GUIConsultas import interfaceConsultas
 
 def Presupuesto(root):
     ventana = Toplevel(root)
     ventana.title('Gestion de Presupuesto')
     ventana.transient(root)
-    app=interfacePresupuesto(root=ventana)
+    app = interfacePresupuesto(root=ventana)
 
 def Datos(root):
     ventana = Toplevel(root)
@@ -14,6 +15,12 @@ def Datos(root):
     ventana.transient(root)
     app = interfaceDatos(root=ventana)
  
+def Consultas(root):
+    ventana = Toplevel(root)
+    ventana.title('Consultas')
+    ventana.transient(root)
+    app = interfaceConsultas(root=ventana)
+
 def Barra_Menu(root):
     Barra_Menu = Menu(root)
     root.config(menu=Barra_Menu)
@@ -22,7 +29,7 @@ def Barra_Menu(root):
     Barra_Menu.add_cascade(label='Funciones',menu=menu_datos)
     menu_datos.add_command(label='Presupuesto',command=lambda:Presupuesto(root))
     menu_datos.add_command(label='Balances Mensuales',command=lambda:Datos(root))
-    Barra_Menu.add_cascade(label='Consultar')
+    Barra_Menu.add_cascade(label='Consultar',command=lambda:Consultas(root))
     Barra_Menu.add_cascade(label='Salir',command=lambda:root.destroy())
 
 def main():

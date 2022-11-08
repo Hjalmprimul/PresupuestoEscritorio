@@ -22,7 +22,7 @@ class Balance():
         if egreOingre == 0:
             conexDB.cursor.execute(sql %(self.mes, self.monto))
         elif egreOingre == 1:
-            conexDB.cursor.execute(sql %(self.mes, (0-self.monto)))
+            conexDB.cursor.execute(sql %(self.mes, (0-int(self.monto))))
         conexDB.con.commit
         conexDB.cerrar()
 
@@ -33,8 +33,24 @@ class Balance():
         dato = conexDB.cursor.fetchall()[0][0]
         sql = "update balances set monto='%s' where mes='%s'"
         if egreOingre == 0:
-            conexDB.cursor.execute(sql %((dato+self.monto),self.mes))
+            conexDB.cursor.execute(sql %((int(dato)+int(self.monto)),self.mes))
         elif egreOingre == 1:
-            conexDB.cursor.execute(sql %((dato-self.monto),self.mes))
+            conexDB.cursor.execute(sql %((int(dato)-int(self.monto)),self.mes))
         conexDB.con.commit
         conexDB.cerrar()
+    
+    def listarBalances():
+        conexDB = ConexionDB()
+        sql = "select * from Balances order by mes"
+        conexDB.cursor.execute(sql)
+        datos = conexDB.cursor.fetchall()
+        conexDB.cerrar()
+        return datos
+    
+    def listarEspecifico(self):
+        conexDB = ConexionDB()
+        sql = "select * from Balances where mes='%s'"
+        conexDB.cursor.execute(sql %(self.mes))
+        dato = conexDB.cursor.fetchall()
+        conexDB.cerrar()
+        return dato

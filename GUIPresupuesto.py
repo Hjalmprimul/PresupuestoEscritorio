@@ -270,7 +270,7 @@ class interfacePresupuesto (Frame):
             self.EgreTV.insert('', 0, text=d[1], values=(self.StringPeso(d[2]),d[3]), tags=d[0])
     # Editar Ingreso y Egreso
     def Editar(self,egreOingre):
-        global esNuevo, montoAnterior
+        global esNuevo, montoAnterior, fechaAnterior
         esNuevo = False
         if egreOingre == 0:
             try:
@@ -284,6 +284,7 @@ class interfacePresupuesto (Frame):
                         st = st + char
                 montoAnterior = st
                 Monto.set(st)
+                fechaAnterior = self.IngreTV.item(self.IngreTV.selection())['values'][1]
                 Fecha.set(self.IngreTV.item(self.IngreTV.selection())['values'][1])
                 #ESTADO BOTONES
                 self.botonEgreso.config(state="disable")
@@ -303,6 +304,7 @@ class interfacePresupuesto (Frame):
                         st = st + char
                 montoAnterior = st
                 Monto.set(st)
+                fechaAnterior = self.EgreTV.item(self.EgreTV.selection())['values'][1]
                 Fecha.set(self.EgreTV.item(self.EgreTV.selection())['values'][1])
                 #ESTADO BOTONES
                 self.botonIngreso.config(state="disable")
@@ -324,7 +326,7 @@ class interfacePresupuesto (Frame):
             self.ResetEntrys()
             self.VerifBalanceEliminar(egreOingre)
         self.Llenar()
-    # Verifica, actualiza balance y crea balance
+    # Verifica, crea balance y actualiza balance
     def VerifBalanceGuardar(self,egreOingre):
         mes = Fecha.get()[3:]
         balance = Balance(mes,Monto.get())
@@ -348,4 +350,19 @@ class interfacePresupuesto (Frame):
         balance = Balance(mes[3:],int(st))
         balance.verificar(1)
     def VerifBalanceEditar(self,egreOingre):
-        pass
+        if fechaAnterior == Fecha.get():
+            balance = Balance(Fecha.get()[3:],int(montoAnterior)-int(Monto.get()))
+            balance.verificar(0)
+        else:
+            if montoAnterior == Monto.get():
+                balance = Balance(fechaAnterior[3:],Monto.get())
+                balance2 = Balance(Fecha.get()[3:],Monto.get())
+            else:
+                balance = Balance(fechaAnterior[3:],montoAnterior)
+                balance2 = Balance(Fecha.get()[3:],Monto.get())
+            if egreOingre == 0:
+                balance.verificar(1)
+                balance2.verificar(0)
+            else:
+                balance.verificar(0)
+                balance2.verificar(1)

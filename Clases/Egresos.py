@@ -41,3 +41,22 @@ class Egreso():
         conexDB.con.commit
         messagebox.showinfo('Modificar','Datos del Egreso Modificados')
         conexDB.cerrar()
+    
+    def buscarFecha(self):
+        conexDB = ConexionDB()
+        fecha = '%' + str(self.fecha) + '%'
+        sql = "select * from egresos where fecha like '%s'"
+        conexDB.cursor.execute(sql %(fecha))
+        datos = conexDB.cursor.fetchall()
+        conexDB.cerrar()
+        return datos
+
+    def buscar(self):
+        conexDB = ConexionDB()
+        fecha = '%' + str(self.fecha) + '%'
+        desc = '%' + str(self.descripcion) + '%'
+        sql = "select * from egresos where fecha like '%s' and descripcion like '%s'"
+        conexDB.cursor.execute(sql %(fecha,desc))
+        datos = conexDB.cursor.fetchall()
+        conexDB.cerrar()
+        return datos

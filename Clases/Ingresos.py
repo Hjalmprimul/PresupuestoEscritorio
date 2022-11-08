@@ -45,3 +45,23 @@ class Ingreso():
     def toString(self):
         st = str(self.id) + ' ' + self.descripcion + ' ' + str(self.monto) + ' ' + self.fecha
         return st
+
+    def buscarFecha(self):
+        conexDB = ConexionDB()
+        fecha = '%' + str(self.fecha) + '%'
+        sql = "select * from ingresos where fecha like '%s'"
+        conexDB.cursor.execute(sql %(fecha))
+        datos = conexDB.cursor.fetchall()
+        conexDB.cerrar()
+        return datos
+
+    def buscar(self):
+        conexDB = ConexionDB()
+        fecha = '%' + str(self.fecha) + '%'
+        desc = '%' + str(self.descripcion) + '%'
+        sql = "select * from ingresos where fecha like '%s' and descripcion like '%s'"
+        conexDB.cursor.execute(sql %(fecha, desc))
+        datos = conexDB.cursor.fetchall()
+        conexDB.cerrar()
+        return datos
+        
